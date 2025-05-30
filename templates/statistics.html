@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #6C63FF;
+        --secondary: #4D44B5;
+        --accent: #FB7D5B;
+        --success: #00C48C;
+        --warning: #FFC107;
+        --danger: #FF647C;
+        --dark: #192A3E;
+        --light: #FBFCFF;
+        --gray: #B5BBC9;
+        --gradient: linear-gradient(135deg, #6C63FF, #4D44B5);
+    }
+    
+    .dashboard-header {
+        background: var(--gradient);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.2);
+    }
+    
+    .dashboard-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .dashboard-header p {
+        opacity: 0.8;
+        margin-top: 10px;
+    }
+    
+    .stat-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        border: none;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card .card-header {
+        padding: 15px 20px;
+        font-weight: 600;
+        border-bottom: none;
+    }
+    
+    .stat-card .card-body {
+        padding: 20px;
+    }
+    
+    .stat-card .card-footer {
+        border-top: none;
+        padding: 15px 20px;
+    }
+    
+    .stat-card i {
+        margin-bottom: 15px;
+        opacity: 0.9;
+    }
+    
+    .stat-card p {
+        color: var(--dark);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .stat-card .btn {
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .primary-card {
+        background: linear-gradient(135deg, #6C63FF, #4D44B5);
+    }
+    
+    .success-card {
+        background: linear-gradient(135deg, #00C48C, #00A376);
+    }
+    
+    .info-card {
+        background: linear-gradient(135deg, #0AACDC, #0A93DC);
+    }
+    
+    .warning-card {
+        background: linear-gradient(135deg, #FFC107, #FF9800);
+    }
+    
+    .danger-card {
+        background: linear-gradient(135deg, #FF647C, #FF4757);
+    }
+    
+    .secondary-card {
+        background: linear-gradient(135deg, #6c757d, #495057);
+    }
+    
+    .quick-stats {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-top: 30px;
+    }
+    
+    .quick-stats h5 {
+        color: var(--dark);
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-item {
+        background: var(--light);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-item h3 {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stat-item p {
+        color: var(--gray);
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    .text-primary {
+        color: var(--primary) !important;
+    }
+    
+    .text-success {
+        color: var(--success) !important;
+    }
+    
+    .text-danger {
+        color: var(--danger) !important;
+    }
+    
+    .text-warning {
+        color: var(--warning) !important;
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-success {
+        background: var(--success);
+        border-color: var(--success);
+    }
+    
+    .btn-info {
+        background: #0AACDC;
+        border-color: #0AACDC;
+    }
+    
+    .btn-warning {
+        background: var(--warning);
+        border-color: var(--warning);
+        color: white;
+    }
+    
+    .btn-danger {
+        background: var(--danger);
+        border-color: var(--danger);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2><i class="fas fa-chart-line me-2"></i> لوحة التحكم والإحصائيات</h2>
+                <p>مرحبًا بك في لوحة الإحصائيات! هنا يمكنك الاطلاع على جميع البيانات والإحصائيات المتعلقة بالحضور والغياب.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-inline-block p-3 bg-white rounded-circle shadow-sm">
+                    <i class="fas fa-chart-pie fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- بطاقة الإحصائيات الشهرية -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header primary-card text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i> الإحصائيات الشهرية</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-4x text-primary mb-3"></i>
+                    <p class="card-text">عرض إحصائيات الحضور والغياب الشهرية مع رسوم بيانية تفاعلية.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('monthly_statistics') }}" class="btn btn-primary w-100">
+                        <i class="fas fa-arrow-left me-2"></i>الذهاب للإحصائيات الشهرية
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقة التقويم الشهري -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header success-card text-white">
+                    <h5 class="card-title mb-0"><i class="far fa-calendar-alt me-2"></i> عرض شهري</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="far fa-calendar-alt fa-4x text-success mb-3"></i>
+                    <p class="card-text">عرض جدول الحضور والغياب بشكل شهري مع إمكانية التنقل بين الأشهر.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('monthly_view') }}" class="btn btn-success w-100">
+                        <i class="fas fa-arrow-left me-2"></i>الذهاب للعرض الشهري
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقة إدارة الطلاب -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header info-card text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i> إدارة الطلاب</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-4x text-info mb-3"></i>
+                    <p class="card-text">إضافة وحذف وتعديل بيانات الطلاب في النظام.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-info w-100 text-white" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                        <i class="fas fa-user-plus me-2"></i>إضافة طالب جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقة إدارة العطل -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header warning-card text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-calendar-day me-2"></i> إدارة العطل الرسمية</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-day fa-4x text-warning mb-3"></i>
+                    <p class="card-text">إضافة وحذف العطل الرسمية التي سيتم استثناؤها من أيام الحضور.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('holidays') }}" class="btn btn-warning w-100 text-white">
+                        <i class="fas fa-calendar-plus me-2"></i>إدارة العطل الرسمية
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقة التقارير -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header danger-card text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-file-pdf me-2"></i> تقارير الحضور</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-file-pdf fa-4x text-danger mb-3"></i>
+                    <p class="card-text">إنشاء تقارير PDF لمتابعة الحضور والغياب للطلاب.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="#" class="btn btn-danger w-100" id="generateReport">
+                        <i class="fas fa-file-download me-2"></i>إنشاء تقرير
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقة الإعدادات -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-header secondary-card text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-cog me-2"></i> إعدادات النظام</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-cog fa-4x text-secondary mb-3"></i>
+                    <p class="card-text">تعديل إعدادات النظام الأساسية وتخصيصها حسب احتياجاتك.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="#" class="btn btn-secondary w-100">
+                        <i class="fas fa-cog me-2"></i>فتح الإعدادات
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قسم الإحصائيات السريعة -->
+    <div class="quick-stats">
+        <h5><i class="fas fa-tachometer-alt me-2"></i> نظرة سريعة على الإحصائيات</h5>
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <h3 class="text-primary">{{ students_count }}</h3>
+                    <p class="mb-0">عدد الطلاب</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stat-item">
+                    <h3 class="text-success">{{ present_percentage }}%</h3>
+                    <p class="mb-0">نسبة الحضور</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <h3 class="text-danger">{{ absent_count }}</h3>
+                    <p class="mb-0">إجمالي أيام الغياب</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <h3 class="text-warning">{{ holidays_count }}</h3>
+                    <p class="mb-0">عدد العطل الرسمية</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // تفعيل أداة التلميحات
+    document.addEventListener('DOMContentLoaded', function() {
+        // زر إنشاء التقرير
+        const generateReportBtn = document.getElementById('generateReport');
+        if (generateReportBtn) {
+            generateReportBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // إنشاء عنصر التنبيه
+                const alertContainer = document.createElement('div');
+                alertContainer.className = 'alert alert-info alert-dismissible fade show';
+                alertContainer.role = 'alert';
+                alertContainer.innerHTML = `
+                    <i class="fas fa-info-circle me-2"></i> جاري تطوير وظيفة إنشاء التقارير. ستكون متاحة قريباً!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+                `;
+                
+                // إضافة التنبيه في أعلى الصفحة
+                const container = document.querySelector('.container');
+                container.insertBefore(alertContainer, container.firstChild);
+                
+                // إزالة التنبيه بعد 5 ثوانٍ
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alertContainer);
+                    bsAlert.close();
+                }, 5000);
+            });
+        }
+        
+        // تأثير التحويم على البطاقات
+        const cards = document.querySelectorAll('.stat-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
+            });
+        });
+    });
+</script>
+{% endblock %}

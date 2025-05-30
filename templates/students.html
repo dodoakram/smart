@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">إدارة الطلاب</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+            <i class="fas fa-plus"></i> إضافة طالب جديد
+        </button>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>اسم الطالب</th>
+                <th>عدد مرات الغياب</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr data-student-id="{{ student.id }}">
+                <td>{{ loop.index }}</td>
+                <td class="student-name">{{ student.name }}</td>
+                <td>{{ student.absences|length }}</td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-primary edit-student" data-id="{{ student.id }}">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-student" 
+                            data-id="{{ student.id }}" 
+                            data-name="{{ student.name }}">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">لا يوجد طلاب مسجلين</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// سيتم تحميل كود JavaScript من ملف settings.js
+// تأكد من تفعيل أزرار التعديل والحذف عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    // تفعيل أزرار التعديل والحذف
+    setupStudentButtons();
+    
+    // إضافة تأثير التلاشي عند الحذف
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        tr.fade-out {
+            animation: fadeOut 0.3s forwards;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

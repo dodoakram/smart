@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">إدارة العطل الرسمية</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">
+            <i class="fas fa-plus"></i> إضافة عطلة
+        </button>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- حاوية للتنبيهات الديناميكية -->
+<div class="alert-container"></div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>اسم العطلة</th>
+                <th>تاريخ البداية</th>
+                <th>تاريخ النهاية</th>
+                <th>المدة (أيام)</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for holiday in holidays %}
+            <tr data-holiday-id="{{ holiday.id }}">
+                <td>{{ loop.index }}</td>
+                <td class="holiday-name">{{ holiday.name }}</td>
+                <td class="holiday-start">{{ holiday.start_date.strftime('%Y-%m-%d') }}</td>
+                <td class="holiday-end">{{ holiday.end_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ (holiday.end_date - holiday.start_date).days + 1 }} يوم</td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-primary edit-holiday" 
+                            data-id="{{ holiday.id }}"
+                            data-name="{{ holiday.name }}"
+                            data-start="{{ holiday.start_date.strftime('%Y-%m-%d') }}"
+                            data-end="{{ holiday.end_date.strftime('%Y-%m-%d') }}">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-holiday" 
+                            data-id="{{ holiday.id }}" 
+                            data-name="{{ holiday.name }}">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">لا توجد عطل مضافة</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'modals/add_holiday_modal.html' %}
+
+<!-- نموذج تعديل العطلة -->
+<div class="modal fade" id="editHolidayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تعديل عطلة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <form id="editHolidayForm" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="holiday_id" id="editHolidayId">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="editHolidayName" class="form-label">اسم العطلة</label>
+                        <input type="text" class="form-control" id="editHolidayName" name="name" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editHolidayStart" class="form-label">تاريخ البداية</label>
+                                <input type="date" class="form-control" id="editHolidayStart" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editHolidayEnd" class="form-label">تاريخ النهاية</label>
+                                <input type="date" class="form-control" id="editHolidayEnd" name="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- تضمين ملفات JavaScript المساعدة -->
+<script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/holidays.js') }}"></script>
+{% endblock %}

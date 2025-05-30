@@ -1,0 +1,609 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #6C63FF;
+        --secondary: #4D44B5;
+        --accent: #FB7D5B;
+        --success: #00C48C;
+        --warning: #FFC107;
+        --danger: #FF647C;
+        --dark: #192A3E;
+        --light: #FBFCFF;
+        --gray: #B5BBC9;
+        --gradient: linear-gradient(135deg, #6C63FF, #4D44B5);
+    }
+    
+    .settings-header {
+        background: var(--gradient);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(108, 99, 255, 0.2);
+    }
+    
+    .settings-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .settings-header p {
+        opacity: 0.8;
+        margin-top: 10px;
+    }
+    
+    .settings-tabs {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+    
+    .nav-tabs {
+        border-bottom: none;
+        padding: 10px 10px 0;
+        background: rgba(108, 99, 255, 0.05);
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px 10px 0 0;
+        padding: 12px 20px;
+        font-weight: 600;
+        color: var(--dark);
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        background: rgba(108, 99, 255, 0.1);
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: white;
+        color: var(--primary);
+        border-top: 3px solid var(--primary);
+    }
+    
+    .tab-content {
+        padding: 30px;
+    }
+    
+    .tab-pane {
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .settings-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .settings-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .settings-card .card-header {
+        padding: 15px 20px;
+        background: var(--gradient);
+        color: white;
+        font-weight: 600;
+    }
+    
+    .settings-card .card-body {
+        padding: 20px;
+    }
+    
+    .settings-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .settings-table th {
+        background: rgba(108, 99, 255, 0.05);
+        padding: 12px 15px;
+        text-align: right;
+        font-weight: 600;
+    }
+    
+    .settings-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .settings-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-icon:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .btn-success {
+        background: var(--success);
+        border-color: var(--success);
+    }
+    
+    .btn-danger {
+        background: var(--danger);
+        border-color: var(--danger);
+    }
+    
+    .btn-warning {
+        background: var(--warning);
+        border-color: var(--warning);
+        color: white;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="settings-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2><i class="fas fa-cog me-2"></i> إعدادات النظام</h2>
+                <p>هنا يمكنك إدارة إعدادات النظام وتخصيصها حسب احتياجاتك.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-inline-block p-3 bg-white rounded-circle shadow-sm">
+                    <i class="fas fa-cog fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="settings-tabs">
+        <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab" aria-controls="students" aria-selected="true">
+                    <i class="fas fa-users me-2"></i> إدارة الطلاب
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="holidays-tab" data-bs-toggle="tab" data-bs-target="#holidays" type="button" role="tab" aria-controls="holidays" aria-selected="false">
+                    <i class="fas fa-calendar-day me-2"></i> إدارة العطل
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab" aria-controls="system" aria-selected="false">
+                    <i class="fas fa-sliders-h me-2"></i> إعدادات عامة
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="settingsTabsContent">
+            <!-- تبويب إدارة الطلاب -->
+            <div class="tab-pane fade show active" id="students" role="tabpanel" aria-labelledby="students-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0"><i class="fas fa-users me-2"></i> قائمة الطلاب</h4>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                        <i class="fas fa-user-plus me-2"></i> إضافة طالب جديد
+                    </button>
+                </div>
+                
+                <div class="settings-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="settings-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم الطالب</th>
+                                        <th>عدد أيام الغياب</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    <tr data-student-id="{{ student.id }}">
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ student.name }}</td>
+                                        <td>{{ student.absences|length }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1 edit-student" 
+                                                    data-id="{{ student.id }}" 
+                                                    data-name="{{ student.name }}">
+                                                <i class="fas fa-edit"></i> تعديل
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-student" 
+                                                    data-id="{{ student.id }}" 
+                                                    data-name="{{ student.name }}">
+                                                <i class="fas fa-trash"></i> حذف
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">لا يوجد طلاب مسجلين</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تبويب إدارة العطل -->
+            <div class="tab-pane fade" id="holidays" role="tabpanel" aria-labelledby="holidays-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0"><i class="fas fa-calendar-day me-2"></i> قائمة العطل الرسمية</h4>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">
+                        <i class="fas fa-calendar-plus me-2"></i> إضافة عطلة جديدة
+                    </button>
+                </div>
+                
+                <div class="settings-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="settings-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم العطلة</th>
+                                        <th>تاريخ البداية</th>
+                                        <th>تاريخ النهاية</th>
+                                        <th>المدة (أيام)</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for holiday in holidays %}
+                                    <tr data-holiday-id="{{ holiday.id }}">
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ holiday.name }}</td>
+                                        <td>{{ holiday.start_date.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ holiday.end_date.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ (holiday.end_date - holiday.start_date).days + 1 }} يوم</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary me-1 edit-holiday" 
+                                                    data-id="{{ holiday.id }}"
+                                                    data-name="{{ holiday.name }}"
+                                                    data-start="{{ holiday.start_date.strftime('%Y-%m-%d') }}"
+                                                    data-end="{{ holiday.end_date.strftime('%Y-%m-%d') }}">
+                                                <i class="fas fa-edit"></i> تعديل
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-holiday" 
+                                                    data-id="{{ holiday.id }}" 
+                                                    data-name="{{ holiday.name }}">
+                                                <i class="fas fa-trash"></i> حذف
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">لا توجد عطل مضافة</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تبويب الإعدادات العامة -->
+            <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
+                <h4 class="mb-4"><i class="fas fa-sliders-h me-2"></i> الإعدادات العامة للنظام</h4>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> معلومات النظام</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">اسم المؤسسة</label>
+                                    <input type="text" class="form-control" id="organizationName" value="المستقبل">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">شعار المؤسسة</label>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="organizationLogo">
+                                        <button class="btn btn-outline-secondary" type="button">تحميل</button>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" id="saveSystemInfo">
+                                        <i class="fas fa-save me-2"></i> حفظ المعلومات
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-database me-2"></i> إحصائيات النظام</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        عدد الطلاب
+                                        <span class="badge bg-primary rounded-pill">{{ students_count }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        عدد العطل الرسمية
+                                        <span class="badge bg-success rounded-pill">{{ holidays_count }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        إجمالي أيام الغياب
+                                        <span class="badge bg-danger rounded-pill">{{ absences_count }}</span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid mt-3">
+                                    <button class="btn btn-warning" id="resetDatabase">
+                                        <i class="fas fa-exclamation-triangle me-2"></i> إعادة تعيين قاعدة البيانات
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج تعديل الطالب -->
+<div class="modal fade" id="editStudentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تعديل بيانات الطالب</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <form id="editStudentForm" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="student_id" id="editStudentId">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="editStudentName" class="form-label">اسم الطالب</label>
+                        <input type="text" class="form-control" id="editStudentName" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'modals/add_student_modal.html' %}
+{% include 'modals/add_holiday_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                      document.querySelector('input[name="csrf_token"]')?.value;
+        
+        // تهيئة أزرار تعديل الطلاب
+        document.querySelectorAll('.edit-student').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const studentId = this.dataset.id;
+                const studentName = this.dataset.name;
+                
+                // تعبئة نموذج التعديل
+                document.getElementById('editStudentId').value = studentId;
+                document.getElementById('editStudentName').value = studentName;
+                
+                // فتح النافذة المنبثقة
+                const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+                modal.show();
+            });
+        });
+        
+        // معالجة حذف الطالب
+        document.querySelectorAll('.delete-student').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const studentId = this.dataset.id;
+                const studentName = this.dataset.name;
+                
+                if (confirm(`هل أنت متأكد من حذف الطالب: ${studentName}؟`)) {
+                    fetch(`/delete_student/${studentId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': token
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // إزالة صف الطالب
+                            const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+                            if (row) {
+                                row.classList.add('fade-out');
+                                setTimeout(() => row.remove(), 300);
+                            }
+                            
+                            // إظهار رسالة نجاح
+                            showAlert('تم حذف الطالب بنجاح', 'success');
+                        } else {
+                            showAlert(data.message || 'حدث خطأ أثناء حذف الطالب', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('حدث خطأ في الاتصال بالخادم', 'danger');
+                    });
+                }
+            });
+        });
+        
+        // معالجة إرسال نموذج تعديل الطالب
+        document.getElementById('editStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentId = document.getElementById('editStudentId').value;
+            const formData = {
+                name: document.getElementById('editStudentName').value
+            };
+            
+            fetch(`/update_student/${studentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': token
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // إغلاق النافذة المنبثقة
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editStudentModal'));
+                    modal.hide();
+                    
+                    // تحديث اسم الطالب في الجدول
+                    const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+                    if (row) {
+                        row.querySelector('td:nth-child(2)').textContent = formData.name;
+                    }
+                    
+                    // إظهار رسالة نجاح
+                    showAlert('تم تحديث بيانات الطالب بنجاح', 'success');
+                } else {
+                    showAlert(data.message || 'حدث خطأ أثناء تحديث بيانات الطالب', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('حدث خطأ في الاتصال بالخادم', 'danger');
+            });
+        });
+        
+        // تهيئة أزرار تعديل العطل
+        document.querySelectorAll('.edit-holiday').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const holidayId = this.dataset.id;
+                const holidayName = this.dataset.name;
+                const holidayStart = this.dataset.start;
+                const holidayEnd = this.dataset.end;
+                
+                // تعبئة نموذج التعديل
+                document.getElementById('editHolidayId').value = holidayId;
+                document.getElementById('editHolidayName').value = holidayName;
+                document.getElementById('editHolidayStart').value = holidayStart;
+                document.getElementById('editHolidayEnd').value = holidayEnd;
+                
+                // فتح النافذة المنبثقة
+                const modal = new bootstrap.Modal(document.getElementById('editHolidayModal'));
+                modal.show();
+            });
+        });
+        
+        // معالجة حذف العطلة
+        document.querySelectorAll('.delete-holiday').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const holidayId = this.dataset.id;
+                const holidayName = this.dataset.name;
+                
+                if (confirm(`هل أنت متأكد من حذف العطلة: ${holidayName}؟`)) {
+                    fetch(`/delete_holiday/${holidayId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': token
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // إزالة صف العطلة
+                            const row = document.querySelector(`tr[data-holiday-id="${holidayId}"]`);
+                            if (row) {
+                                row.classList.add('fade-out');
+                                setTimeout(() => row.remove(), 300);
+                            }
+                            
+                            // إظهار رسالة نجاح
+                            showAlert('تم حذف العطلة بنجاح', 'success');
+                        } else {
+                            showAlert(data.message || 'حدث خطأ أثناء حذف العطلة', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('حدث خطأ في الاتصال بالخادم', 'danger');
+                    });
+                }
+            });
+        });
+        
+        // إعادة تعيين قاعدة البيانات
+        document.getElementById('resetDatabase').addEventListener('click', function() {
+            if (confirm('هل أنت متأكد من إعادة تعيين قاعدة البيانات؟ سيتم حذف جميع البيانات!')) {
+                alert('هذه الميزة غير متاحة حالياً. يرجى التواصل مع مسؤول النظام.');
+            }
+        });
+        
+        // حفظ معلومات النظام
+        document.getElementById('saveSystemInfo').addEventListener('click', function() {
+            // إظهار رسالة نجاح
+            showAlert('تم حفظ معلومات النظام بنجاح', 'success');
+        });
+        
+        // دالة لإظهار التنبيهات
+        function showAlert(message, type) {
+            const alertContainer = document.createElement('div');
+            alertContainer.className = `alert alert-${type} alert-dismissible fade show`;
+            alertContainer.role = 'alert';
+            alertContainer.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+            `;
+            
+            // إضافة التنبيه في أعلى الصفحة
+            const container = document.querySelector('.container');
+            container.insertBefore(alertContainer, container.firstChild);
+            
+            // إزالة التنبيه بعد 5 ثوانٍ
+            setTimeout(function() {
+                const bsAlert = new bootstrap.Alert(alertContainer);
+                bsAlert.close();
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

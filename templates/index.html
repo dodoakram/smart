@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تسجيل الغياب | المستقبل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4D44B5;
+            --accent: #FB7D5B;
+            --success: #00C48C;
+            --warning: #FFC107;
+            --danger: #FF647C;
+            --dark: #192A3E;
+            --light: #FBFCFF;
+            --gray: #B5BBC9;
+            --gradient: linear-gradient(135deg, #6C63FF, #4D44B5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), var(--light);
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .wave {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%236C63FF' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .sidebar {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 30px 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            margin-left: 10px;
+            background: white;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .nav-links li {
+            margin-bottom: 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links i {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .date-display {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .date-display .current-date {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .date-display .day-name {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+        }
+        
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-right: 45px;
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .flash-messages {
+            list-style: none;
+        }
+        
+        .flash-messages li {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            padding-right: 50px;
+            animation: slideIn 0.5s ease forwards;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .flash-messages .success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .flash-messages .warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        .flash-messages .danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .flash-messages li::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+        
+        .flash-messages .success::before {
+            content: "\f058";
+        }
+        
+        .flash-messages .warning::before {
+            content: "\f071";
+        }
+        
+        .flash-messages .danger::before {
+            content: "\f057";
+        }
+        
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .student-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(108, 99, 255, 0.15);
+        }
+        
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--gradient);
+        }
+        
+        .student-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .student-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .student-id {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .student-body {
+            padding: 20px;
+        }
+        
+        .absence-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group i {
+            margin-left: 8px;
+            color: var(--primary);
+        }
+        
+        .date-picker {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eaedf3;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .date-picker:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        
+        .absence-type {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .radio-card {
+            flex: 1;
+        }
+        
+        .radio-card input[type="radio"] {
+            display: none;
+        }
+        
+        .radio-card label {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #eaedf3;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .radio-card input[type="radio"]:checked + label {
+            border-color: var(--primary);
+            background: rgba(108, 99, 255, 0.05);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .radio-card label i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .empty-state p {
+            color: var(--gray);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            
+            .mobile-logo {
+                display: flex;
+                align-items: center;
+            }
+            
+            .mobile-logo i {
+                font-size: 1.5rem;
+                margin-left: 10px;
+                color: var(--primary);
+            }
+            
+            .mobile-logo h1 {
+                font-size: 1.2rem;
+            }
+            
+            .mobile-menu {
+                background: none;
+                border: none;
+                color: var(--dark);
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+        }
+        
+        @media (min-width: 993px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .student-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+        }
+        
+        .alert-message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .alert-message i {
+            font-size: 1.5rem;
+        }
+        
+        .alert-message.warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="wave"></div>
+    
+    <div class="container">
+        <div class="mobile-nav">
+            <div class="mobile-logo">
+                <i class="fas fa-user-check"></i>
+                <h1>نظام تسجيل الغياب</h1>
+            </div>
+            <button class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="logo">
+                    <i class="fas fa-user-check"></i>
+                    <h1>نظام تسجيل الغياب</h1>
+                </div>
+                
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('index') }}" class="active"><i class="fas fa-home"></i> الصفحة الرئيسية</a></li>
+                    <li><a href="{{ url_for('monthly_view') }}"><i class="fas fa-calendar-alt"></i> العرض الشهري</a></li>
+                    <li><a href="{{ url_for('statistics') }}"><i class="fas fa-chart-bar"></i> الإحصائيات</a></li>
+                    <li><a href="{{ url_for('settings') }}"><i class="fas fa-cog"></i> الإعدادات</a></li>
+                </ul>
+                
+                <div class="date-display">
+                    <div class="day-name" id="current-day">الخميس</div>
+                    <div class="current-date" id="current-date">29 مايو</div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="header">
+                    <h1>تسجيل الغياب</h1>
+                    <div class="search-bar">
+                        <input type="text" placeholder="البحث عن طالب...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <ul class="flash-messages">
+                    {% for category, message in messages %}
+                      <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endwith %}
+                
+                {% if students %}
+                <div class="student-grid">
+                    {% for student in students %}
+                    <div class="student-card">
+                        <div class="student-header">
+                            <div class="student-avatar">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div>
+                                <div class="student-name">{{ student.name }}</div>
+                                <div class="student-id">رقم الطالب: {{ student.id }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="student-body">
+                            {% if is_holiday or is_weekend %}
+                                <div class="alert-message warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    {% if is_holiday %}
+                                        <span>لا يمكن تسجيل الغياب في أيام العطل الرسمية</span>
+                                    {% elif is_weekend %}
+                                        <span>لا يمكن تسجيل الغياب في أيام عطلة نهاية الأسبوع</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <form class="absence-form" method="POST" action="{{ url_for('mark_absence') }}">
+                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                    
+                                    <div class="form-group">
+                                        <label for="absence_date_{{ student.id }}"><i class="far fa-calendar-alt"></i> تاريخ الغياب</label>
+                                        <input type="date" id="absence_date_{{ student.id }}" name="absence_date" value="{{ current_date.strftime('%Y-%m-%d') }}" class="date-picker" max="{{ current_date.strftime('%Y-%m-%d') }}">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label><i class="fas fa-clock"></i> نوع الغياب</label>
+                                        <div class="absence-type">
+                                            <div class="radio-card">
+                                                <input type="radio" id="full_{{ student.id }}" name="absence_type" value="full" checked>
+                                                <label for="full_{{ student.id }}">
+                                                    <i class="fas fa-calendar-day"></i>
+                                                    يوم كامل
+                                                </label>
+                                            </div>
+                                            <div class="radio-card">
+                                                <input type="radio" id="half_{{ student.id }}" name="absence_type" value="half">
+                                                <label for="half_{{ student.id }}">
+                                                    <i class="fas fa-calendar-day fa-flip-horizontal"></i>
+                                                    نصف يوم
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="submit-btn">
+                                        <i class="fas fa-save"></i>
+                                        تسجيل الغياب
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-user-slash"></i>
+                    <h2>لا يوجد طلاب</h2>
+                    <p>لم يتم العثور على أي طلاب في النظام. يرجى إضافة طلاب لتتمكن من تسجيل الغياب.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // تحديث التاريخ الحالي
+        function updateDate() {
+            const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const months = ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            
+            const now = new Date();
+            const dayName = days[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            
+            document.getElementById('current-day').textContent = dayName;
+            document.getElementById('current-date').textContent = day + ' ' + month;
+        }
+        
+        // تنفيذ عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+        });
+    </script>
+</body>
+</html>
